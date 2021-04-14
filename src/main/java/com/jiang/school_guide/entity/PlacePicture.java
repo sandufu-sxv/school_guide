@@ -1,6 +1,7 @@
 package com.jiang.school_guide.entity;
 
 import com.jiang.school_guide.common.domain.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -16,6 +17,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
+@ApiModel
 public class PlacePicture extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

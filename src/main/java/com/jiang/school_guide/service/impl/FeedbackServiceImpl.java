@@ -34,8 +34,8 @@ public class FeedbackServiceImpl extends ServiceImpl<FeedbackMapper, Feedback> i
     // TODO: 2021/4/7
     @Override
     public ServerResponse addFeedback(Feedback feedback) {
-        //int id = (int)TokenUntil.getIdByToken().getData();
-        //feedback.setUserId(id);
+        int id = TokenUntil.getIdByToken();
+        feedback.setUserId(id);
         feedback.setState(0);
         feedback.setCreateTime(LocalDateTime.now());
         feedback.setUpdateTime(LocalDateTime.now());

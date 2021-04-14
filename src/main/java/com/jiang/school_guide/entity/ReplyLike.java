@@ -1,6 +1,8 @@
 package com.jiang.school_guide.entity;
 
 import com.jiang.school_guide.common.domain.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -16,6 +18,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
+@ApiModel
 public class ReplyLike extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -23,11 +26,13 @@ public class ReplyLike extends BaseEntity {
     /**
      * 点赞人id
      */
+    @ApiModelProperty(value = "点赞人id")
     private Integer userId;
 
     /**
      * 评论id
      */
+    @ApiModelProperty(value = "评论id")
     private Integer replyId;
 
 

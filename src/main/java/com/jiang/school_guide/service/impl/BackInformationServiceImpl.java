@@ -33,6 +33,9 @@ public class BackInformationServiceImpl extends ServiceImpl<BackInformationMappe
 
     @Override
     public ServerResponse addBackInformation(BackInformation backInformation) {
+        if("user".equals(TokenUntil.getRoleByToken())){
+            backInformation.setUserId(TokenUntil.getIdByToken());
+        }
         backInformation.setCreateTime(LocalDateTime.now());
         backInformation.setUpdateTime(LocalDateTime.now());
         if(backInformationMapper.insert(backInformation) == 1){

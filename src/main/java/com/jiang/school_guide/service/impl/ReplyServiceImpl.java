@@ -25,6 +25,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,7 +52,6 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
     public ServerResponse addReply(Reply reply) {
         int id = TokenUntil.getIdByToken();
         reply.setUserId(id);
-
         reply.setCreateTime(LocalDateTime.now());
         reply.setUpdateTime(LocalDateTime.now());
         reply.setState(0);
@@ -62,22 +62,67 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
     }
 
     @Override
-    public ServerResponse getReplyByPlaceId(Pagination pagination) {
+    public ServerResponse getReplyByPlaceIdAndLikes(Pagination pagination) {
         QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("place_id",pagination.getId())
                 .eq("type",0)
                 .orderByDesc("likes")
                 .orderByDesc("create_time");
         List<Reply> replyList  = replyMapper.selectList(queryWrapper);
+        List<ReplyVo> replyVoList  = new ArrayList<>();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader(Const.TOKEN);
+        boolean flag = StringUtils.isEmpty(token);
+        for(Reply reply : replyList){
+            replyVoList.add(voReplyOne(reply, flag));
+        }
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
-        PageInfo<Reply> pageInfo = new PageInfo<>(replyList);
+        PageInfo<ReplyVo> pageInfo = new PageInfo<>(replyVoList);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse getReplyByPlaceIdAndTime(Pagination pagination) {
+        QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("place_id",pagination.getId())
+                .eq("type",0)
+                .orderByDesc("create_time");
+        List<Reply> replyList  = replyMapper.selectList(queryWrapper);
+        List<ReplyVo> replyVoList  = new ArrayList<>();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader(Const.TOKEN);
+        boolean flag = StringUtils.isEmpty(token);
+        for(Reply reply : replyList){
+            replyVoList.add(voReplyOne(reply, flag));
+        }
+        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        PageInfo<ReplyVo> pageInfo = new PageInfo<>(replyVoList);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
     @Override
     public ServerResponse getReplyByOneId(Pagination pagination) {
         QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("reply_id",pagination.getId());
+        queryWrapper.eq("root_id",pagination.getId())
+                .eq("type",1)
+                .orderByDesc("create_time");
+        List<Reply> replyList  = replyMapper.selectList(queryWrapper);
+        List<ReplyVo> replyVoList  = new ArrayList<>();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader(Const.TOKEN);
+        boolean flag = StringUtils.isEmpty(token);
+        for(Reply reply : replyList){
+            replyVoList.add(voReplyTwo(reply, flag));
+        }
+        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        PageInfo<ReplyVo> pageInfo = new PageInfo<>(replyVoList);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse getReplyByReports(Pagination pagination) {
+        QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("reports",1).orderByDesc("reports").orderByDesc("create_time");
         List<Reply> replyList  = replyMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
         PageInfo<Reply> pageInfo = new PageInfo<>(replyList);
@@ -86,11 +131,23 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
 
     @Override
     public ServerResponse deleteReplyOne(Integer replyId) {
+        Reply reply = replyMapper.selectById(replyId);
+        //给用户的违规次数加一
+        User user = userMapper.selectById(reply.getUserId());
+        if(user.getViolations() >= 9){
+            user.setStatus(1);
+        }
+        user.setViolations(user.getViolations() + 1);
+        userMapper.updateById(user);
         //删除该评论的点赞数据
         iReplyLikeService.deleteReplyLikeByReply(replyId);
         //删除此评论的子评论
         QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("root_id",replyId);
+        List<Reply> replyList = replyMapper.selectList(queryWrapper);
+        for (Reply reply1 : replyList){
+            iReplyLikeService.deleteReplyLikeByReply(reply1.getId());
+        }
         replyMapper.delete(queryWrapper);
         if(replyMapper.deleteById(replyId) == 1){
             return ServerResponse.createBySuccessMessage("删除评论成功");
@@ -100,6 +157,14 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
 
     @Override
     public ServerResponse deleteReplyTwo(Integer replyId) {
+        Reply reply = replyMapper.selectById(replyId);
+        //给用户的违规次数加一
+        User user = userMapper.selectById(reply.getUserId());
+        if(user.getViolations() >= 9){
+            user.setStatus(1);
+        }
+        user.setViolations(user.getViolations() + 1);
+        userMapper.updateById(user);
         //删除该评论的点赞数据
         iReplyLikeService.deleteReplyLikeByReply(replyId);
         //删除此评论的子评论
@@ -119,24 +184,76 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
         return ServerResponse.createBySuccess(reply);
     }
 
+    @Override
+    public ServerResponse updateReply(Reply reply) {
+        if(replyMapper.updateById(reply) == 1){
+            return ServerResponse.createBySuccessMessage("更新评论成功");
+        }
+        return ServerResponse.createByErrorMessage("系统错误，请稍后重试");
+    }
 
-    private ReplyVo voReply(Reply reply){
+
+    private ReplyVo voReplyOne(Reply reply, boolean flag){
         ReplyVo replyVo = (ReplyVo) reply;
         User user = userMapper.selectById(reply.getUserId());
         replyVo.setHeadPortrait(user.getHeadPortrait());
-        replyVo.setUserName(user.getNickName());
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = request.getHeader(Const.TOKEN);
-        if (StringUtils.isEmpty(token)){
+        if(replyVo.getAnonymous() == 1){
+            replyVo.setUserName(user.getNickName());
+        }else replyVo.setUserName("匿名用户");
+        if (flag){
             //未登录
             replyVo.setFlag(0);
+            replyVo.setCurrent(0);
         }else {
+            if(reply.getUserId() == user.getId()){
+                replyVo.setCurrent(1);
+            }else replyVo.setCurrent(0);
             if(iReplyLikeService.getReplyLike(reply.getId())){
                 replyVo.setFlag(1);
             }else replyVo.setFlag(0);
         }
-        QueryWrapper<Reply>
+        QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("root_id",reply.getId())
+                .orderByDesc("likes")
+                .orderByDesc("create_time")
+                .last("limit 3");
+        List<Reply> replyList = replyMapper.selectList(queryWrapper);
+        List<ReplyVo> replyVoList = new ArrayList<>();
+        for(Reply reply1 : replyList){
+            ReplyVo replyVo1 = (ReplyVo) reply1;
+            //不匿名
+            if(replyVo1.getAnonymous() == 1){
+                User user1 = userMapper.selectById(reply1.getUserId());
+                replyVo1.setUserName(user1.getNickName());
+            }else replyVo1.setUserName("匿名用户");
+            replyVoList.add(replyVo1);
+        }
+        replyVo.setReplyList(replyVoList);
+        return replyVo;
+    }
 
+    private ReplyVo voReplyTwo(Reply reply, boolean flag){
+        ReplyVo replyVo = (ReplyVo) reply;
+        User user = userMapper.selectById(reply.getUserId());
+        replyVo.setHeadPortrait(user.getHeadPortrait());
+        if(replyVo.getAnonymous() == 1){
+            replyVo.setUserName(user.getNickName());
+        }else replyVo.setUserName("匿名用户");
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader(Const.TOKEN);
+        if (flag){
+            //未登录
+            replyVo.setFlag(0);
+            replyVo.setCurrent(0);
+        }else {
+            if(reply.getUserId() == user.getId()){
+                replyVo.setCurrent(1);
+            }else replyVo.setCurrent(0);
+            if(iReplyLikeService.getReplyLike(reply.getId())){
+                replyVo.setFlag(1);
+            }else replyVo.setFlag(0);
+        }
+        return replyVo;
     }
 
     @Override

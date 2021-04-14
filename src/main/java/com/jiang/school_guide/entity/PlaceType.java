@@ -1,6 +1,8 @@
 package com.jiang.school_guide.entity;
 
 import com.jiang.school_guide.common.domain.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -16,6 +18,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
+@ApiModel
 public class PlaceType extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -23,11 +26,13 @@ public class PlaceType extends BaseEntity {
     /**
      * 地点类型
      */
-    private String type;
+    @ApiModelProperty(value = "地点类型")
+    private String name;
 
     /**
      * 地点状态：-1-删除，0-正常
      */
+    @ApiModelProperty(value = "地点状态：-1-删除，0-正常")
     private Integer state;
 
 }
