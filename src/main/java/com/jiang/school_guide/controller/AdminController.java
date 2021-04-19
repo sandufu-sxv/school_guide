@@ -6,6 +6,7 @@ import com.jiang.school_guide.common.authentication.TokenUntil;
 import com.jiang.school_guide.common.domain.Const;
 import com.jiang.school_guide.common.domain.ServerResponse;
 import com.jiang.school_guide.entity.Admin;
+import com.jiang.school_guide.entity.form.Pagination;
 import com.jiang.school_guide.service.IAdminService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,13 @@ public class AdminController {
     public ServerResponse deleteAdmin(@RequestBody @NonNull Admin admin) {
         admin.setState(1);
         return iAdminService.updateAdmin(admin);
+    }
+
+    @ApiOperation("获取所有管理员信息")
+    @GetMapping("/get")
+    @Permission(roles = {Const.ADMIN})
+    public ServerResponse getAdmin(Pagination pagination) {
+        return iAdminService.getAdmin(pagination);
     }
 
     @ApiOperation("更新管理员信息")

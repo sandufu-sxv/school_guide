@@ -47,8 +47,16 @@ public class FeedbackServiceImpl extends ServiceImpl<FeedbackMapper, Feedback> i
 
     @Override
     public ServerResponse getAllFeedback(Pagination pagination) {
+        List<Feedback> feedbackList = feedbackMapper.selectList(null);
+        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        PageInfo<Feedback> pageInfo= new PageInfo<>(feedbackList);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse getAllFeedbackByState(Pagination pagination) {
         QueryWrapper<Feedback> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("state",1);
+        queryWrapper.eq("state",pagination.getStatus());
         List<Feedback> feedbackList = feedbackMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
         PageInfo<Feedback> pageInfo= new PageInfo<>(feedbackList);

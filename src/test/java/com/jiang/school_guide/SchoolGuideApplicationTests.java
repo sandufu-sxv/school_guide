@@ -5,8 +5,12 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jiang.school_guide.common.authentication.JWTUtil;
 import com.jiang.school_guide.common.authentication.TokenUntil;
+import com.jiang.school_guide.common.domain.ServerResponse;
 import com.jiang.school_guide.dao.AdminMapper;
 import com.jiang.school_guide.entity.Admin;
+import com.jiang.school_guide.entity.Reply;
+import com.jiang.school_guide.entity.vo.ReplyVo;
+import com.jiang.school_guide.service.IAdminService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +22,9 @@ class SchoolGuideApplicationTests {
 
     @Autowired
     private AdminMapper adminMapper;
+
+    @Autowired
+    private IAdminService iAdminService;
 
     @Test
     void contextLoads() {
@@ -43,6 +50,24 @@ class SchoolGuideApplicationTests {
         queryWrapper.eq("id",null);
         List<Admin> adminList = adminMapper.selectList(queryWrapper);
         System.out.println(adminList.size());
+    }
+
+    @Test
+    void test4(){
+        Reply reply = new Reply();
+        reply.setState(1);
+        ReplyVo replyVo = new ReplyVo(reply);
+        System.out.println(replyVo.getState());
+    }
+
+    @Test
+    void test5(){
+        Admin admin = new Admin();
+        admin.setUserName("1111");
+        admin.setPhone("1234567");
+        ServerResponse serverResponse = iAdminService.addAdmin(admin);
+        System.out.println(serverResponse.getMessage());
+
     }
 
 }

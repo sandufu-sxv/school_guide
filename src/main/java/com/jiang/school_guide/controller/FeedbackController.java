@@ -41,11 +41,18 @@ public class FeedbackController {
         return iFeedbackService.getFeedback(pagination);
     }
 
-    @ApiOperation("管理员获取所有未处理的意见信息")
+    @ApiOperation("管理员获取所有的意见信息")
     @GetMapping("/getAll")
     @Permission(roles = {Const.ADMIN})
     public ServerResponse getAllFeedback(Pagination pagination) {
         return iFeedbackService.getAllFeedback(pagination);
+    }
+
+    @ApiOperation("管理员依据状态获取意见信息（0-未处理；1-已处理）")
+    @GetMapping("/getByAdmin")
+    @Permission(roles = {Const.ADMIN})
+    public ServerResponse getAllFeedbackByState(Pagination pagination) {
+        return iFeedbackService.getFeedbackByState(pagination);
     }
 
     @ApiOperation("用户更新自己的意见信息（无用，写着玩的）")

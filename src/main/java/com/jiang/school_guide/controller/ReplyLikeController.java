@@ -33,12 +33,12 @@ public class ReplyLikeController {
         return iReplyLikeService.addReplyLike(ReplyLike);
     }
 
-    @ApiOperation("用户获取自己的点赞信息（无用）")
-    @GetMapping("/get")
-    @Permission(roles = {Const.USER})
-    public ServerResponse getReplyLike(Integer ReplyId) {
-        return iReplyLikeService.getReplyLike(ReplyId);
-    }
+//    @ApiOperation("用户获取自己的点赞信息（无用）")
+//    @GetMapping("/get")
+//    @Permission(roles = {Const.USER})
+//    public ServerResponse getReplyLike(Integer ReplyId) {
+//        return iReplyLikeService.getReplyLike(ReplyId);
+//    }
 
     @ApiOperation("取消点赞")
     @DeleteMapping("/delete")

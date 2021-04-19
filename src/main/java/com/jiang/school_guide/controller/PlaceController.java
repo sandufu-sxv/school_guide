@@ -34,6 +34,13 @@ public class PlaceController {
         return iPlaceService.addPlace(Place);
     }
 
+    @ApiOperation("获取所有地点（id为地点类型id）")
+    @GetMapping("/getAll")
+    @Permission(roles = {Const.ADMIN})
+    public ServerResponse getPlace(Pagination pagination) {
+        return iPlaceService.getPlace(pagination);
+    }
+
     @ApiOperation("依据所属分类查询地点（id为地点类型id）")
     @GetMapping("/getByType")
     public ServerResponse getPlaceByType(Pagination pagination) {

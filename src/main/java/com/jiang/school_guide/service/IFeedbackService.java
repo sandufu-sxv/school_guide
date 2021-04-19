@@ -17,8 +17,11 @@ public interface IFeedbackService extends IService<Feedback> {
     //添加反馈意见
     ServerResponse addFeedback(Feedback feedback);
 
-    //查询所有反馈意见（依据状态）
+    //查询所有反馈意见
     ServerResponse getAllFeedback(Pagination pagination);
+
+    //查询所有反馈意见（依据状态）
+    ServerResponse getAllFeedbackByState(Pagination pagination);
 
     //查询单个用户的反馈意见.
     ServerResponse getFeedback(Pagination pagination);

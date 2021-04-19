@@ -30,9 +30,9 @@ public class PlaceType extends BaseEntity {
     private String name;
 
     /**
-     * 地点状态：-1-删除，0-正常
+     * 地点状态：0-正常;1-删除
      */
-    @ApiModelProperty(value = "地点状态：-1-删除，0-正常")
+    @ApiModelProperty(value = "地点状态：0-正常;1-删除")
     private Integer state;
 
 }

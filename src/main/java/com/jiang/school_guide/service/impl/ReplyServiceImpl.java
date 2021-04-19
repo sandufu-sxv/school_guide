@@ -64,7 +64,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
     @Override
     public ServerResponse getReplyByPlaceIdAndLikes(Pagination pagination) {
         QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("place_id",pagination.getId())
+        queryWrapper.eq("root_id",pagination.getId())
                 .eq("type",0)
                 .orderByDesc("likes")
                 .orderByDesc("create_time");
@@ -84,7 +84,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
     @Override
     public ServerResponse getReplyByPlaceIdAndTime(Pagination pagination) {
         QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("place_id",pagination.getId())
+        queryWrapper.eq("root_id",pagination.getId())
                 .eq("type",0)
                 .orderByDesc("create_time");
         List<Reply> replyList  = replyMapper.selectList(queryWrapper);
@@ -194,7 +194,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
 
 
     private ReplyVo voReplyOne(Reply reply, boolean flag){
-        ReplyVo replyVo = (ReplyVo) reply;
+        ReplyVo replyVo = new ReplyVo(reply);
         User user = userMapper.selectById(reply.getUserId());
         replyVo.setHeadPortrait(user.getHeadPortrait());
         if(replyVo.getAnonymous() == 1){
@@ -220,7 +220,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
         List<Reply> replyList = replyMapper.selectList(queryWrapper);
         List<ReplyVo> replyVoList = new ArrayList<>();
         for(Reply reply1 : replyList){
-            ReplyVo replyVo1 = (ReplyVo) reply1;
+            ReplyVo replyVo1 = new ReplyVo(reply1) ;
             //不匿名
             if(replyVo1.getAnonymous() == 1){
                 User user1 = userMapper.selectById(reply1.getUserId());
@@ -229,18 +229,20 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
             replyVoList.add(replyVo1);
         }
         replyVo.setReplyList(replyVoList);
+        QueryWrapper<Reply> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("root_id",reply.getId());
+        int count = replyMapper.selectCount(queryWrapper);
+        replyVo.setCount(count);
         return replyVo;
     }
 
     private ReplyVo voReplyTwo(Reply reply, boolean flag){
-        ReplyVo replyVo = (ReplyVo) reply;
+        ReplyVo replyVo = new ReplyVo(reply);
         User user = userMapper.selectById(reply.getUserId());
         replyVo.setHeadPortrait(user.getHeadPortrait());
         if(replyVo.getAnonymous() == 1){
             replyVo.setUserName(user.getNickName());
         }else replyVo.setUserName("匿名用户");
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = request.getHeader(Const.TOKEN);
         if (flag){
             //未登录
             replyVo.setFlag(0);

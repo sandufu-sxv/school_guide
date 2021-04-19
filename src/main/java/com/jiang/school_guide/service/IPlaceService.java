@@ -21,6 +21,9 @@ public interface IPlaceService extends IService<Place> {
     //更新地点
     ServerResponse updatePlace(Place place);
 
+    //依据所有地点
+    ServerResponse getPlace(Pagination pagination);
+
     //依据所属分类查询地点
     ServerResponse getPlaceByType(Pagination pagination);
 

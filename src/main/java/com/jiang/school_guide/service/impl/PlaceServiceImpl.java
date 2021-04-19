@@ -58,6 +58,14 @@ public class PlaceServiceImpl extends ServiceImpl<PlaceMapper, Place> implements
     }
 
     @Override
+    public ServerResponse getPlace(Pagination pagination) {
+        List<Place> placeList = placeMapper.selectList(null);
+        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        PageInfo<Place> pageInfo = new PageInfo<>(placeList);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
     public ServerResponse getPlaceByType(Pagination pagination) {
         QueryWrapper<Place> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type_id",pagination.getId());
@@ -84,7 +92,7 @@ public class PlaceServiceImpl extends ServiceImpl<PlaceMapper, Place> implements
     @Override
     public ServerResponse deletePlace(Integer placeId) {
         Place place = placeMapper.selectById(placeId);
-        place.setState(-1);
+        place.setState(1);
         place.setUpdateTime(LocalDateTime.now());
         if(placeMapper.updateById(place) == 1){
             return ServerResponse.createBySuccessMessage("删除成功");
