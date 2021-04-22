@@ -39,6 +39,11 @@ public class PlaceTypeServiceImpl extends ServiceImpl<PlaceTypeMapper, PlaceType
         placeType.setState(0);
         placeType.setCreateTime(LocalDateTime.now());
         placeType.setUpdateTime(LocalDateTime.now());
+        QueryWrapper<PlaceType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type",placeType.getName());
+        if(placeTypeMapper.selectCount(queryWrapper) > 0){
+            return ServerResponse.createByErrorMessage("已存在此种类型名，请勿重复添加");
+        }
         if(placeTypeMapper.insert(placeType) == 1){
             return ServerResponse.createBySuccessMessage("添加成功");
         }

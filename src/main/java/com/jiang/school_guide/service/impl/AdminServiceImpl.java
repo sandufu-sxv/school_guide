@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiang.school_guide.common.authentication.JWTUtil;
+import com.jiang.school_guide.common.authentication.TokenUntil;
 import com.jiang.school_guide.common.domain.Const;
 import com.jiang.school_guide.common.domain.ServerResponse;
 import com.jiang.school_guide.entity.Admin;
@@ -65,7 +66,13 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         if(adminMapper.insert(admin) == 1){
             return ServerResponse.createBySuccessMessage("添加管理员成功");
         }
-         return ServerResponse.createByErrorMessage("系统错误，请稍后重试");
+        return ServerResponse.createByErrorMessage("系统错误，请稍后重试");
+    }
+
+    @Override
+    public ServerResponse getAdminById() {
+        int id = TokenUntil.getIdByToken();
+        return ServerResponse.createBySuccess(adminMapper.selectById(id));
     }
 
     @Override
@@ -78,9 +85,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
 
     @Override
     public ServerResponse deleteAdmin(Admin admin) {
-        QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id", admin.getId());
-        if(adminMapper.delete(queryWrapper) == 1){
+        if(adminMapper.updateById(admin) == 1){
             return ServerResponse.createByErrorMessage("删除用户名为：" + admin.getUserName() + "的管理员成功");
         }
         return ServerResponse.createByErrorMessage("系统错误，请稍后重试");
@@ -88,18 +93,26 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
 
     @Override
     public ServerResponse updateAdmin(Admin admin) {
-        if(admin.getPhone() == null){
-            return ServerResponse.createByErrorMessage("电话号码不能为空");
+        if(admin.getPhone() != null){
+            QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("phone",admin.getPhone());
+            Admin admin1 = adminMapper.selectOne(queryWrapper);
+            if(admin1 != null && admin1.getId() != admin.getId()){
+                return ServerResponse.createByErrorMessage("手机号码重复");
+            }
+        }
+        if(admin.getUserName() != null){
+            QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("user_name",admin.getUserName());
+            Admin admin1 = adminMapper.selectOne(queryWrapper);
+            if(admin1 != null && admin1.getId() != admin.getId()){
+                return ServerResponse.createByErrorMessage("用户名重复");
+            }
         }
         admin.setUpdateTime(LocalDateTime.now());
-        QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("phone",admin.getPhone());
-        if(adminMapper.selectList(queryWrapper) != null){
-            return ServerResponse.createByErrorMessage("手机号码重复");
-        }
         QueryWrapper<Admin> queryWrapper1 = new QueryWrapper<>();
         queryWrapper1.eq("id",admin.getId());
-        if(adminMapper.update(admin,queryWrapper) == 1){
+        if(adminMapper.updateById(admin) == 1){
             return ServerResponse.createBySuccessMessage("更新信息成功");
         }
         return ServerResponse.createByErrorMessage("系统错误，请稍后重试");

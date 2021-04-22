@@ -75,7 +75,7 @@ public class ReplyController {
 
     @ApiOperation("更新评论（判断未违规时使用，需要将被举报数设置为0，状态设置为未举报（0））")
     @PostMapping("/update")
-    @Permission(roles = {Const.ADMIN})
+    @Permission(roles = {Const.ADMIN,Const.USER})
     public ServerResponse updateReply(@RequestBody @NonNull Reply reply) {
         return iReplyService.updateReply(reply);
     }

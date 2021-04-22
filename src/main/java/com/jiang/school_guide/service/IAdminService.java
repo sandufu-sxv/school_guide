@@ -20,6 +20,8 @@ public interface IAdminService extends IService<Admin> {
     //添加管理员(手机号码不可为空，且手机号码不可重复)
     ServerResponse addAdmin(Admin admin);
 
+    ServerResponse getAdminById();
+
     ServerResponse getAdmin(Pagination pagination);
 
     //删除管理员

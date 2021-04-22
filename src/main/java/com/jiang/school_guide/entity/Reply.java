@@ -39,7 +39,7 @@ public class Reply extends BaseEntity {
      * 二级评论所回复的信息的id
      */
     @ApiModelProperty(value = "二级评论所回复的信息的id")
-    private Integer replyId;
+    private Integer fatherId;
 
     /**
      * 所回复评论的用户名，若回复的是匿名消息，则为“匿名用户”

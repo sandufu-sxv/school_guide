@@ -60,13 +60,12 @@ public class ReplyLikeServiceImpl extends ServiceImpl<ReplyLikeMapper, ReplyLike
 
 
     @Override
-    public ServerResponse deleteReplyLike(Integer ReplyLikeId) {
+    public ServerResponse deleteReplyLike(Integer ReplyId) {
         int id = TokenUntil.getIdByToken();
         QueryWrapper<ReplyLike> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id", ReplyLikeId)
+        queryWrapper.eq("reply_id", ReplyId)
                 .eq("user_id",id);
-        ReplyLike replyLike = replyLikeMapper.selectById(ReplyLikeId);
-        Reply reply = replyMapper.selectById(replyLike.getReplyId());
+        Reply reply = replyMapper.selectById(ReplyId);
         reply.setLikes(reply.getLikes() - 1);
         replyMapper.updateById(reply);
         if(replyLikeMapper.delete(queryWrapper) == 1){

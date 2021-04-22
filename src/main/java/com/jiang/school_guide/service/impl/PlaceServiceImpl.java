@@ -42,6 +42,11 @@ public class PlaceServiceImpl extends ServiceImpl<PlaceMapper, Place> implements
         place.setCreateTime(LocalDateTime.now());
         place.setUpdateTime(LocalDateTime.now());
         place.setState(0);
+        QueryWrapper<Place> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("place_name",place.getPlaceName());
+        if(placeMapper.selectCount(queryWrapper) > 0){
+            return ServerResponse.createByErrorMessage("已存在此地点，请勿重复添加");
+        }
         if(placeMapper.insert(place) == 1){
             return ServerResponse.createBySuccessMessage("添加地点成功");
         }

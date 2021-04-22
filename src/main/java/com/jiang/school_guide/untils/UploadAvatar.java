@@ -11,7 +11,7 @@ import java.io.IOException;
 @Component
 public class UploadAvatar {
 
-    private static String uploadPicturePath = "/usr/local/share-image/image/";
+    private static String uploadPicturePath = "D:/picture/";
 
     public  String uploadAvatar(MultipartFile image) throws IOException {
         String url="";

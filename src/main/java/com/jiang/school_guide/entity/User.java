@@ -57,11 +57,6 @@ public class User extends BaseEntity {
     @ApiModelProperty(value = "qq")
     private String qq;
 
-    /**
-     * 用户最后在线时间
-     */
-    @ApiModelProperty(value = "用户最后在线时间")
-    private LocalDateTime currentTime;
 
     /**
      * 用户违规次数

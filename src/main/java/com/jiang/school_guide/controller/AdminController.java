@@ -46,7 +46,14 @@ public class AdminController {
     @Permission(roles = {Const.ADMIN})
     public ServerResponse deleteAdmin(@RequestBody @NonNull Admin admin) {
         admin.setState(1);
-        return iAdminService.updateAdmin(admin);
+        return iAdminService.deleteAdmin(admin);
+    }
+
+    @ApiOperation("获取管理员自身信息")
+    @GetMapping("/getOne")
+    @Permission(roles = {Const.ADMIN})
+    public ServerResponse getAdmin() {
+        return iAdminService.getAdminById();
     }
 
     @ApiOperation("获取所有管理员信息")
@@ -62,5 +69,4 @@ public class AdminController {
     public ServerResponse updateAdmin(@RequestBody @NonNull Admin admin) {
         return iAdminService.updateAdmin(admin);
     }
-
 }

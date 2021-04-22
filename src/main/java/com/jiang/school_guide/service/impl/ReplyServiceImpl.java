@@ -122,7 +122,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
     @Override
     public ServerResponse getReplyByReports(Pagination pagination) {
         QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("reports",1).orderByDesc("reports").orderByDesc("create_time");
+        queryWrapper.eq("state",1).orderByDesc("reports").orderByDesc("create_time");
         List<Reply> replyList  = replyMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
         PageInfo<Reply> pageInfo = new PageInfo<>(replyList);
@@ -131,14 +131,16 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
 
     @Override
     public ServerResponse deleteReplyOne(Integer replyId) {
-        Reply reply = replyMapper.selectById(replyId);
-        //给用户的违规次数加一
-        User user = userMapper.selectById(reply.getUserId());
-        if(user.getViolations() >= 9){
-            user.setStatus(1);
+        if("admin".equals(TokenUntil.getRoleByToken())){
+            Reply reply = replyMapper.selectById(replyId);
+            //给用户的违规次数加一
+            User user = userMapper.selectById(reply.getUserId());
+            if(user.getViolations() >= 9){
+                user.setStatus(1);
+            }
+            user.setViolations(user.getViolations() + 1);
+            userMapper.updateById(user);
         }
-        user.setViolations(user.getViolations() + 1);
-        userMapper.updateById(user);
         //删除该评论的点赞数据
         iReplyLikeService.deleteReplyLikeByReply(replyId);
         //删除此评论的子评论
@@ -157,21 +159,18 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
 
     @Override
     public ServerResponse deleteReplyTwo(Integer replyId) {
-        Reply reply = replyMapper.selectById(replyId);
-        //给用户的违规次数加一
-        User user = userMapper.selectById(reply.getUserId());
-        if(user.getViolations() >= 9){
-            user.setStatus(1);
+        if("admin".equals(TokenUntil.getRoleByToken())){
+            Reply reply = replyMapper.selectById(replyId);
+            //给用户的违规次数加一
+            User user = userMapper.selectById(reply.getUserId());
+            if(user.getViolations() >= 9){
+                user.setStatus(1);
+            }
+            user.setViolations(user.getViolations() + 1);
+            userMapper.updateById(user);
         }
-        user.setViolations(user.getViolations() + 1);
-        userMapper.updateById(user);
         //删除该评论的点赞数据
         iReplyLikeService.deleteReplyLikeByReply(replyId);
-        //删除此评论的子评论
-        QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("reply_id",replyId);
-        replyMapper.delete(queryWrapper);
-        //删除此评论的子评论
         if(replyMapper.deleteById(replyId) == 1){
             return ServerResponse.createBySuccessMessage("删除评论成功");
         }

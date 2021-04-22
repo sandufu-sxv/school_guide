@@ -77,4 +77,10 @@ public class TokenUntil {
         System.out.println("token有效");
         return  ServerResponse.createBySuccess(id);
     }
+
+    public static boolean isLogin(){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader(Const.TOKEN);
+        return !StringUtils.isEmpty(token);
+    }
 }

@@ -52,12 +52,12 @@ public class FeedbackController {
     @GetMapping("/getByAdmin")
     @Permission(roles = {Const.ADMIN})
     public ServerResponse getAllFeedbackByState(Pagination pagination) {
-        return iFeedbackService.getFeedbackByState(pagination);
+        return iFeedbackService.getAllFeedbackByState(pagination);
     }
 
     @ApiOperation("用户更新自己的意见信息（无用，写着玩的）")
     @PostMapping("/update")
-    @Permission(roles = {Const.USER})
+    @Permission(roles = {Const.ADMIN})
     public ServerResponse addAdmin(@RequestBody @NonNull Feedback Feedback) {
         return iFeedbackService.updateFeedback(Feedback);
     }
