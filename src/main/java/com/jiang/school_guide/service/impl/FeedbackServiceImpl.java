@@ -47,8 +47,8 @@ public class FeedbackServiceImpl extends ServiceImpl<FeedbackMapper, Feedback> i
 
     @Override
     public ServerResponse getAllFeedback(Pagination pagination) {
-        List<Feedback> feedbackList = feedbackMapper.selectList(null);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<Feedback> feedbackList = feedbackMapper.selectList(null);
         PageInfo<Feedback> pageInfo= new PageInfo<>(feedbackList);
         return ServerResponse.createBySuccess(pageInfo);
     }
@@ -57,8 +57,8 @@ public class FeedbackServiceImpl extends ServiceImpl<FeedbackMapper, Feedback> i
     public ServerResponse getAllFeedbackByState(Pagination pagination) {
         QueryWrapper<Feedback> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("state",pagination.getStatus());
-        List<Feedback> feedbackList = feedbackMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<Feedback> feedbackList = feedbackMapper.selectList(queryWrapper);
         PageInfo<Feedback> pageInfo= new PageInfo<>(feedbackList);
         return ServerResponse.createBySuccess(pageInfo);
     }
@@ -68,8 +68,8 @@ public class FeedbackServiceImpl extends ServiceImpl<FeedbackMapper, Feedback> i
         int id = TokenUntil.getIdByToken();
         QueryWrapper<Feedback> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",id);
-        List<Feedback> feedbackList = feedbackMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<Feedback> feedbackList = feedbackMapper.selectList(queryWrapper);
         PageInfo<Feedback> pageInfo= new PageInfo<>(feedbackList);
         return ServerResponse.createBySuccess(pageInfo);
     }
@@ -80,8 +80,8 @@ public class FeedbackServiceImpl extends ServiceImpl<FeedbackMapper, Feedback> i
         QueryWrapper<Feedback> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",id)
                 .eq("state",pagination.getStatus());
-        List<Feedback> feedbackList = feedbackMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<Feedback> feedbackList = feedbackMapper.selectList(queryWrapper);
         PageInfo<Feedback> pageInfo= new PageInfo<>(feedbackList);
         return ServerResponse.createBySuccess(pageInfo);
     }

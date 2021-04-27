@@ -49,8 +49,8 @@ public class BackInformationServiceImpl extends ServiceImpl<BackInformationMappe
         int id = TokenUntil.getIdByToken();
         QueryWrapper<BackInformation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",id);
-        List<BackInformation> backInformationList = backInformationMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<BackInformation> backInformationList = backInformationMapper.selectList(queryWrapper);
         PageInfo<BackInformation> pageInfo = new PageInfo<>(backInformationList);
         return ServerResponse.createBySuccess(pageInfo);
     }

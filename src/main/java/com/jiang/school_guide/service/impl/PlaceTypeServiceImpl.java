@@ -69,8 +69,8 @@ public class PlaceTypeServiceImpl extends ServiceImpl<PlaceTypeMapper, PlaceType
     @Override
     public ServerResponse getPlaceType(Pagination pagination) {
         QueryWrapper<PlaceType> queryWrapper = new QueryWrapper<>();
-        List<PlaceType> placeTypeList = placeTypeMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<PlaceType> placeTypeList = placeTypeMapper.selectList(queryWrapper);
         PageInfo<PlaceType> pageInfo = new PageInfo<>(placeTypeList);
         return ServerResponse.createBySuccess(pageInfo);
     }

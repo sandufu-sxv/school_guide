@@ -12,6 +12,7 @@ import com.jiang.school_guide.dao.AdminMapper;
 import com.jiang.school_guide.entity.form.Pagination;
 import com.jiang.school_guide.service.IAdminService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiang.school_guide.untils.EncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     public ServerResponse login(Admin admin) {
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_name",admin.getUserName())
-                .eq("password",admin.getPassword());
+                .eq("password", EncryptionService.encryption(admin.getPassword()));
         admin = adminMapper.selectOne(queryWrapper);
         if(admin == null){
             return ServerResponse.createByErrorMessage("账号或密码错误");
@@ -55,7 +56,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         }
         admin.setState(0);
         // TODO: 2021/4/19 未完善
-        admin.setPassword("123456");
+        admin.setPassword(EncryptionService.encryption("123456"));
         admin.setCreateTime(LocalDateTime.now());
         admin.setUpdateTime(LocalDateTime.now());
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
@@ -77,8 +78,8 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
 
     @Override
     public ServerResponse getAdmin(Pagination pagination) {
-        List<Admin> adminList = adminMapper.selectList(null);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<Admin> adminList = adminMapper.selectList(null);
         PageInfo<Admin> pageInfo = new PageInfo<>(adminList);
         return ServerResponse.createBySuccess(pageInfo);
     }

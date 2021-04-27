@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfiguration implements WebMvcConfigurer {
 
-    private static String uploadPicturePath = "/usr/local/share-image/image/";
+    private static String uploadPicturePath = "D:/picture/";
 
     @Value("/img/**")
     private  String imgPath;
@@ -27,6 +27,7 @@ public class CorsConfiguration implements WebMvcConfigurer {
                 //跨域允许时间
                 .maxAge(3600);
     }
+
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

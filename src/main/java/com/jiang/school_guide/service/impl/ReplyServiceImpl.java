@@ -68,7 +68,9 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
                 .eq("type",0)
                 .orderByDesc("likes")
                 .orderByDesc("create_time");
+        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
         List<Reply> replyList  = replyMapper.selectList(queryWrapper);
+        PageInfo pageInfo = new PageInfo<>(replyList);
         List<ReplyVo> replyVoList  = new ArrayList<>();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader(Const.TOKEN);
@@ -76,8 +78,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
         for(Reply reply : replyList){
             replyVoList.add(voReplyOne(reply, flag));
         }
-        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
-        PageInfo<ReplyVo> pageInfo = new PageInfo<>(replyVoList);
+       pageInfo.setList(replyVoList);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
@@ -87,7 +88,9 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
         queryWrapper.eq("root_id",pagination.getId())
                 .eq("type",0)
                 .orderByDesc("create_time");
+        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
         List<Reply> replyList  = replyMapper.selectList(queryWrapper);
+        PageInfo pageInfo = new PageInfo<>(replyList);
         List<ReplyVo> replyVoList  = new ArrayList<>();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader(Const.TOKEN);
@@ -95,8 +98,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
         for(Reply reply : replyList){
             replyVoList.add(voReplyOne(reply, flag));
         }
-        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
-        PageInfo<ReplyVo> pageInfo = new PageInfo<>(replyVoList);
+        pageInfo.setList(replyVoList);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
@@ -106,7 +108,9 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
         queryWrapper.eq("root_id",pagination.getId())
                 .eq("type",1)
                 .orderByDesc("create_time");
+        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
         List<Reply> replyList  = replyMapper.selectList(queryWrapper);
+        PageInfo pageInfo = new PageInfo<>(replyList);
         List<ReplyVo> replyVoList  = new ArrayList<>();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String token = request.getHeader(Const.TOKEN);
@@ -114,8 +118,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
         for(Reply reply : replyList){
             replyVoList.add(voReplyTwo(reply, flag));
         }
-        PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
-        PageInfo<ReplyVo> pageInfo = new PageInfo<>(replyVoList);
+        pageInfo.setList(replyVoList);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
@@ -123,8 +126,8 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
     public ServerResponse getReplyByReports(Pagination pagination) {
         QueryWrapper<Reply> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("state",1).orderByDesc("reports").orderByDesc("create_time");
-        List<Reply> replyList  = replyMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<Reply> replyList  = replyMapper.selectList(queryWrapper);
         PageInfo<Reply> pageInfo = new PageInfo<>(replyList);
         return ServerResponse.createBySuccess(pageInfo);
     }

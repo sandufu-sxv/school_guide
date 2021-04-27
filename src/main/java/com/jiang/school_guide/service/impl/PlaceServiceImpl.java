@@ -64,8 +64,8 @@ public class PlaceServiceImpl extends ServiceImpl<PlaceMapper, Place> implements
 
     @Override
     public ServerResponse getPlace(Pagination pagination) {
-        List<Place> placeList = placeMapper.selectList(null);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<Place> placeList = placeMapper.selectList(null);
         PageInfo<Place> pageInfo = new PageInfo<>(placeList);
         return ServerResponse.createBySuccess(pageInfo);
     }
@@ -74,8 +74,8 @@ public class PlaceServiceImpl extends ServiceImpl<PlaceMapper, Place> implements
     public ServerResponse getPlaceByType(Pagination pagination) {
         QueryWrapper<Place> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type_id",pagination.getId());
-        List<Place> placeList = placeMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<Place> placeList = placeMapper.selectList(queryWrapper);
         PageInfo<Place> pageInfo = new PageInfo<>(placeList);
         return ServerResponse.createBySuccess(pageInfo);
     }
@@ -87,8 +87,8 @@ public class PlaceServiceImpl extends ServiceImpl<PlaceMapper, Place> implements
         if(pagination.getId() != null){
             queryWrapper.eq("type_id",pagination.getId());
         }
-        List<Place> placeList = placeMapper.selectList(queryWrapper);
         PageHelper.startPage(pagination.getPageNum(),pagination.getPageSize());
+        List<Place> placeList = placeMapper.selectList(queryWrapper);
         PageInfo<Place> pageInfo = new PageInfo<>(placeList);
         return ServerResponse.createBySuccess(pageInfo);
     }
