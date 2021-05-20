@@ -34,7 +34,7 @@ public class PlaceTypeController {
         return iPlaceTypeService.addPlaceType(PlaceType);
     }
 
-    @ApiOperation("查询所有地点类型")
+    @ApiOperation("查询所有地点类型(可以传入status)")
     @GetMapping("/get")
     public ServerResponse getPlaceType(Pagination pagination) {
         return iPlaceTypeService.getPlaceType(pagination);
@@ -50,7 +50,7 @@ public class PlaceTypeController {
     @ApiOperation("更新某个地点所有的地点类型信息")
     @PostMapping("/update")
     @Permission(roles = {Const.ADMIN})
-    public ServerResponse deletePlaceType(@RequestBody @NonNull PlaceType PlaceType) {
+    public ServerResponse updatePlaceType(@RequestBody @NonNull PlaceType PlaceType) {
         return iPlaceTypeService.updatePlaceType(PlaceType);
     }
 }

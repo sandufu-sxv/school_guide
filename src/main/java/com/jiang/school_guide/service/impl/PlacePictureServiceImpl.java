@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -29,10 +30,18 @@ public class PlacePictureServiceImpl extends ServiceImpl<PlacePictureMapper, Pla
 
     @Override
     public ServerResponse addPlacePicture(PlacePicture placePicture) {
-        placePicture.setCreateTime(LocalDateTime.now());
-        placePicture.setUpdateTime(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        placePicture.setCreateTime(now);
+        placePicture.setUpdateTime(now);
         if(placePictureMapper.insert(placePicture) == 1){
-            return ServerResponse.createBySuccessMessage("添加成功");
+            QueryWrapper<PlacePicture> queryWrapper = new QueryWrapper<>();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String formattedDateTime = now.format(formatter);
+            queryWrapper.eq("image",placePicture.getImage())
+                    .eq("place_id",placePicture.getPlaceId())
+                    .eq("create_time",formattedDateTime);
+            PlacePicture placePicture1 = placePictureMapper.selectOne(queryWrapper);
+            return ServerResponse.createBySuccessMessage("添加成功",placePicture1);
         }
         return ServerResponse.createByErrorMessage("系统错误，请稍后重试");
     }

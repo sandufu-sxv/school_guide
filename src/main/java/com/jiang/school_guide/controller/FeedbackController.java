@@ -55,10 +55,10 @@ public class FeedbackController {
         return iFeedbackService.getAllFeedbackByState(pagination);
     }
 
-    @ApiOperation("用户更新自己的意见信息（无用，写着玩的）")
+    @ApiOperation("管理员更新意见信息")
     @PostMapping("/update")
     @Permission(roles = {Const.ADMIN})
-    public ServerResponse addAdmin(@RequestBody @NonNull Feedback Feedback) {
+    public ServerResponse updateFeedback(@RequestBody @NonNull Feedback Feedback) {
         return iFeedbackService.updateFeedback(Feedback);
     }
 

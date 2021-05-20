@@ -14,6 +14,7 @@ import com.jiang.school_guide.service.IAdminService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
 
@@ -25,6 +26,9 @@ class SchoolGuideApplicationTests {
 
     @Autowired
     private IAdminService iAdminService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Test
     void contextLoads() {
@@ -67,6 +71,13 @@ class SchoolGuideApplicationTests {
         admin.setPhone("1234567");
         ServerResponse serverResponse = iAdminService.addAdmin(admin);
         System.out.println(serverResponse.getMessage());
+
+    }
+
+    @Test
+    void test6(){
+       redisTemplate.opsForValue().set("name","jiang");
+        System.out.println(redisTemplate.opsForValue().get("name"));
 
     }
 

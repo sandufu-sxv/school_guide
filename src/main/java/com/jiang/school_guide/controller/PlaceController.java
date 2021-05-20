@@ -56,7 +56,7 @@ public class PlaceController {
     @ApiOperation("更新地点信息")
     @PostMapping("/update")
     @Permission(roles = {Const.ADMIN})
-    public ServerResponse addAdmin(@RequestBody @NonNull Place Place) {
+    public ServerResponse updatePlace(@RequestBody @NonNull Place Place) {
         return iPlaceService.updatePlace(Place);
     }
 

@@ -11,7 +11,6 @@ import java.util.List;
 @EqualsAndHashCode()
 @Accessors(chain = true)
 public class PlaceVo extends Place {
-
     //地点图片路径的url
     private List<String> pictureUrl;
 }
